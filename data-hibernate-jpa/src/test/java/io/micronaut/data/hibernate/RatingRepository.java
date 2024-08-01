@@ -1,12 +1,16 @@
 package io.micronaut.data.hibernate;
 
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.hibernate.entities.Rating;
 import io.micronaut.data.jpa.annotation.EntityGraph;
 import io.micronaut.data.repository.CrudRepository;
 
+import io.micronaut.data.tck.entities.Author;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,4 +27,7 @@ public interface RatingRepository extends CrudRepository<Rating, UUID> {
 
     @EntityGraph(attributePaths = { "book.author", "book.pages", "author.books" })
     Optional<Rating> getById(@NotNull UUID id);
+
+    @Query("SELECT r FROM Rating r WHERE r.author in :authors")
+    List<Rating> findByAuthors(List<Author> authors);
 }
